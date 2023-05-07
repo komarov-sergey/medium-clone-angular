@@ -10,6 +10,7 @@ import {
 } from '../../store/selectors'
 import { environment } from 'src/environments/environment.development'
 import { ActivatedRoute, Params, Router } from '@angular/router'
+import stringify from 'query-string'
 
 @Component({
   selector: 'mc-feed',
@@ -35,7 +36,6 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeValues()
-    this.fetchData()
     this.initializeListeners()
   }
 
@@ -50,16 +50,23 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.baseUrl = this.router.url.split('?')[0]
   }
 
-  fetchData(): void {
-    console.log(this.apiUrlProps)
-    this.store.dispatch(getFeedAction({ url: this.apiUrlProps }))
+  fetchFeed(): void {
+    const offset = this.currentPage * this.limit - this.limit
+    const parsedUrl = stringify.parseUrl(this.apiUrlProps)
+    const stringifiedParams = stringify.stringify({
+      limit: this.limit,
+      offset,
+      ...parsedUrl.query,
+    })
+    const apiUrlwITHpARAMS = `${parsedUrl.url}?${stringifiedParams}`
+    this.store.dispatch(getFeedAction({ url: apiUrlwITHpARAMS }))
   }
 
   initializeListeners(): void {
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params: Params) => {
         this.currentPage = Number(params['page'] || 1)
-        console.log(this.currentPage)
+        this.fetchFeed()
       }
     )
   }

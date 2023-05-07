@@ -12,6 +12,7 @@ import { TopBarModule } from './shared/modules/backendErrorMessages/components/t
 import { PersistanceService } from './shared/services/persistance.service'
 import { AuthInterceptor } from './shared/services/authinterceptor.service'
 import { GlobalFeedModule } from './globalFeed/globalFeed.module'
+import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store'
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,7 @@ import { GlobalFeedModule } from './globalFeed/globalFeed.module'
     AppRoutingModule,
     AuthModule,
     HttpClientModule,
-    StoreModule.forRoot({}),
+    StoreModule.forRoot({ router: routerReducer }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
@@ -29,6 +30,7 @@ import { GlobalFeedModule } from './globalFeed/globalFeed.module'
       trace: false, //  If set to true, will include stack trace for every dispatched action, so you can see it in trace tab jumping directly to that part of code
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
     }),
+    StoreRouterConnectingModule.forRoot(),
     TopBarModule,
     GlobalFeedModule,
   ],
